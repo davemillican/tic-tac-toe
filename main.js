@@ -5,6 +5,7 @@ var players = [];
 var prompt = require ('prompt-sync').prompt;
 
 var x, y;
+var currentName;
 
 var gameBoard = [ [' ',' ',' '], [' ',' ',' '], [' ',' ',' '] ];
 
@@ -43,12 +44,23 @@ do {
 		do {
 			// Swap the player
 			numMoves++;
-			( currentPlayer === "O") ? currentPlayer = "X" : currentPlayer = "O";
+
+			if ( currentPlayer === "O") {
+				currentPlayer = "X";
+				currentName = players[0];
+			}
+			else {	
+				currentPlayer = "O";
+				currentName = players[1];
+
+			}
+
+
 
 			//  Get a Valid move from the next player.
 			do {
 				//  Ask the player for the next move
-				console.log (" Please enter the next move.")
+				console.log (currentName + ", please enter the next move.")
 				inputStr = prompt();
 
 				//  Validate Move
@@ -77,24 +89,18 @@ do {
 					   		}
 					   		else 
 					   		{
-					   			// Error Msg
-					   			console.log ("error 1");
-					   			console.log (gameBoard);
+					   			console.log ("Invalid input: that space is already taken.");
+					   		
 					   		}
 
 					   }
 					   else
 					   {
-					   			console.log ("error 2");
-					   		// Error msg
+					   		console.log ("Invalid input: those coordinates are outside the playable area.");
 					   }
 
-
-
 				} else {
-					console.log ("error 3");
-					// error message
-
+					console.log ("Invalid input: you must enter the x and y coordinates separated by spaces.");					
 				} 
 			} while ( validMove === false );
 
@@ -115,8 +121,6 @@ do {
 			console.log (" ");
 			console.log (" ");
 
-			console.log (gameBoard);
-
 
 			
 
@@ -133,7 +137,13 @@ do {
 					&& ( gameBoard[1][1] !== " ") ) )
 			{ 
 				//  We have a winner.
-				console.log ("Player wins");
+				console.log (currentName + " wins!!!!!!!!");
+				console.log ("Congratulations!!!");
+				console.log ("");
+				console.log ("");
+				console.log ("");
+				console.log ("");
+
 				game_done = true;
 
 			}
@@ -146,9 +156,10 @@ do {
 		} while ( game_done === false );
 
 
-// while the players want to play the game
-console.log("Would you like to play another game? Yes/No");
-answer = prompt();	
+	// while the players want to play the game
+	console.log("Would you like to play another game? Yes/No");
+	answer = prompt();	
+
 } while ( answer === "yes");
 
 console.log ("Thank you for playing Tic Tac Toe.")
