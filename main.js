@@ -5,7 +5,7 @@ var players = [];
 var prompt = require ('prompt-sync').prompt;
 
 var x, y;
-var currentName;
+var currentName, nextPlayer;
 
 var gameBoard = [ [' ',' ',' '], [' ',' ',' '], [' ',' ',' '] ];
 
@@ -48,14 +48,15 @@ do {
 			if ( currentPlayer === "O") {
 				currentPlayer = "X";
 				currentName = players[0];
+				nextPlayer = players[1];
 			}
 			else {	
 				currentPlayer = "O";
 				currentName = players[1];
-
+				nextPlayer = players[0];
 			}
 
-
+			forfeit = false;
 
 			//  Get a Valid move from the next player.
 			do {
@@ -63,94 +64,104 @@ do {
 				console.log (currentName + ", please enter the next move.")
 				inputStr = prompt();
 
-				//  Validate Move
-				nextMove = inputStr.split(" ");
-
-				validMove = false;
-
-				if  ( 	(nextMove.length === 2) 
-					&&  (isNaN(nextMove[0]) === false )
-					&&	(isNaN(nextMove[1]) === false ) )
+				if (inputStr === "forfeit")
 				{
-					x = parseInt(nextMove[0]);
-					y = parseInt(nextMove[1]);
+					validMove = true;
+					forfeit = true;
+					game_done = true;
 
-					// We need to convert the user Numbering of 1-3 to the 
-					//  internal numbering of 0-2.
-					x--;
-					y--;
-
-					if ( (x >= 0) && (y  >= 0) && (x < 3) && (y < 3) )
-					   {
-					   		if (gameBoard[x][y] === " " ) 
-					   		{
-					   			validMove = true;
-
-					   		}
-					   		else 
-					   		{
-					   			console.log ("Invalid input: that space is already taken.");
-					   		
-					   		}
-
-					   }
-					   else
-					   {
-					   		console.log ("Invalid input: those coordinates are outside the playable area.");
-					   }
+					console.log (currentName + " forfeits: " + nextPlayer + " wins.");
 
 				} else {
-					console.log ("Invalid input: you must enter the x and y coordinates separated by spaces.");					
-				} 
+					//  Validate Move
+					nextMove = inputStr.split(" ");
+
+					validMove = false;
+
+					if  ( 	(nextMove.length === 2) 
+						&&  (isNaN(nextMove[0]) === false )
+						&&	(isNaN(nextMove[1]) === false ) )
+					{
+						x = parseInt(nextMove[0]);
+						y = parseInt(nextMove[1]);
+
+						// We need to convert the user Numbering of 1-3 to the 
+						//  internal numbering of 0-2.
+						x--;
+						y--;
+
+						if ( (x >= 0) && (y  >= 0) && (x < 3) && (y < 3) )
+						   {
+						   		if (gameBoard[x][y] === " " ) 
+						   		{
+						   			validMove = true;
+
+						   		}
+						   		else 
+						   		{
+						   			console.log ("Invalid input: that space is already taken.");
+						   		
+						   		}
+
+						   }
+						   else
+						   {
+						   		console.log ("Invalid input: those coordinates are outside the playable area.");
+						   }
+
+					} else {
+						console.log ("Invalid input: you must enter the x and y coordinates separated by spaces.");					
+					} 
+				}	
 			} while ( validMove === false );
+			 
+			if (forfeit === false)
+			{	
 
+				gameBoard[x][y] = currentPlayer;
 
-			gameBoard[x][y] = currentPlayer;
+				//  The Display the board
+				console.log("    1   2   3  ");
+				console.log("  ~~~~~~~~~~~~~");
+				console.log("1 | " + gameBoard[0][0] + " | " + gameBoard[1][0] + " | " + gameBoard[2][0] + " |");
+				console.log("  ~~~~~~~~~~~~~");
+				console.log("2 | " + gameBoard[0][1] + " | " + gameBoard[1][1] + " | " + gameBoard[2][1] + " |");
+				console.log("  ~~~~~~~~~~~~~");
+				console.log("3 | " + gameBoard[0][2] + " | " + gameBoard[1][2] + " | " + gameBoard[2][2] + " |");
+				console.log("  ~~~~~~~~~~~~~");
 
-			//  The Display the board
-			console.log("    1   2   3  ");
-			console.log("  ~~~~~~~~~~~~~");
-			console.log("1 | " + gameBoard[0][0] + " | " + gameBoard[1][0] + " | " + gameBoard[2][0] + " |");
-			console.log("  ~~~~~~~~~~~~~");
-			console.log("2 | " + gameBoard[0][1] + " | " + gameBoard[1][1] + " | " + gameBoard[2][1] + " |");
-			console.log("  ~~~~~~~~~~~~~");
-			console.log("3 | " + gameBoard[0][2] + " | " + gameBoard[1][2] + " | " + gameBoard[2][2] + " |");
-			console.log("  ~~~~~~~~~~~~~");
-
-			console.log (" ");
-			console.log (" ");
-			console.log (" ");
-
+				console.log (" ");
+				console.log (" ");
+				console.log (" ");
 
 			
+				// check for winner
+				if  ((     ( gameBoard[x][0] === gameBoard[x][1]) && ( gameBoard[x][1] === gameBoard[x][2]) )
+					||  (  ( gameBoard[0][y] === gameBoard[1][y]) && ( gameBoard[1][y] === gameBoard[2][y]) )
+					//Following is a number of Checks for Diagonal Win
+					||  ((   gameBoard[0][0] === gameBoard[1][1])  
+						&& ( gameBoard[1][1] === gameBoard[2][2])
+						&& ( gameBoard[1][1] !== " ") )
+					||  (( gameBoard[0][2] === gameBoard[1][1]) 
+						&& ( gameBoard[1][1] === gameBoard[2][0])
+						&& ( gameBoard[1][1] !== " ") ) )
+				{ 
+					//  We have a winner.
+					console.log (currentName + " wins!!!!!!!!");
+					console.log ("Congratulations!!!");
+					console.log ("");
+					console.log ("");
+					console.log ("");
+					console.log ("");
 
-		
-			// check for winner
-			if  ((     ( gameBoard[x][0] === gameBoard[x][1]) && ( gameBoard[x][1] === gameBoard[x][2]) )
-				||  (  ( gameBoard[0][y] === gameBoard[1][y]) && ( gameBoard[1][y] === gameBoard[2][y]) )
-				//Following is a number of Checks for Diagonal Win
-				||  ((   gameBoard[0][0] === gameBoard[1][1])  
-					&& ( gameBoard[1][1] === gameBoard[2][2])
-					&& ( gameBoard[1][1] !== " ") )
-				||  (( gameBoard[0][2] === gameBoard[1][1]) 
-					&& ( gameBoard[1][1] === gameBoard[2][0])
-					&& ( gameBoard[1][1] !== " ") ) )
-			{ 
-				//  We have a winner.
-				console.log (currentName + " wins!!!!!!!!");
-				console.log ("Congratulations!!!");
-				console.log ("");
-				console.log ("");
-				console.log ("");
-				console.log ("");
+					game_done = true;
 
-				game_done = true;
-
-			}
-			else if (numMoves === 9)
-			{
-				console.log("It's a Tie!!!")
-				game_done = true;
+				}
+				else if (numMoves === 9)
+				{
+					console.log("It's a Tie!!!")
+					game_done = true;
+				}
 			}
 
 		} while ( game_done === false );
